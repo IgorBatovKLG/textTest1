@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,18 +30,46 @@ namespace textTest1
         private void OpenFile_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.ShowDialog();
+            bool? res = ofd.ShowDialog();
+
+            if (res != false)
+            {
+                Stream myStream;
+                if ((myStream = ofd.OpenFile()) != null)
+                {
+                    string file_name = ofd.FileName;
+                    string file_text = File.ReadAllText(file_name);
+                    textBox.Text = file_text;
+                }
+            }
         }
 
         private void SafeFile_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
-            sfd.ShowDialog();
+            bool? res = sfd.ShowDialog();
+
+
+            if (res != false)
+            {
+                using (Stream s = File.Open(sfd.FileName, FileMode.OpenOrCreate))
+                {
+                    using (StreamWriter sw = new StreamWriter(s))
+                    {
+                        sw.Write(textBox.Text);
+                    }
+                }
+            }
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void createNew_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
